@@ -1,0 +1,42 @@
+# Entorno virtual
+venv/
+.env
+*.env
+
+# Credenciales sensibles
+credentials/
+*.json
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Logs
+*.log
+
+# Archivos temporales
+*.swp
+*.bak
+*.tmp
+*.orig
+.DS_Store
+Thumbs.db
+
+# Archivos de test
+coverage.xml
+htmlcov/
+.cache/
+.tox/
+.pytest_cache/
+
+# IDEs y editores
+.vscode/
+.idea/
+*.code-workspace
+
+# Archivos de dependencias no congelados (opcionales)
+Pipfile
+Pipfile.lock
+poetry.lock

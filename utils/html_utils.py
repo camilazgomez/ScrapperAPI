@@ -1,4 +1,5 @@
 import re
+import httpx
 import unicodedata
 from typing import Tuple, Optional
 from bs4 import BeautifulSoup
@@ -39,13 +40,11 @@ def click_all_load_more(driver, wait: WebDriverWait | None = None) -> None:
             break 
 
 
-def extract_read_time(driver: WebDriver, url: str, timeout: int = 8) -> str:
+def extract_read_time(article_url: str, timeout: int = 5) -> str:
     try:
-        driver.get(url)
-        WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "div.Text_body__snVk8"))
-        )
-        soup = BeautifulSoup(driver.page_source, "html.parser")
+        resp = httpx.get(article_url, timeout=timeout)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
         txt_div = soup.select_one("div.Text_body__snVk8")
         if not txt_div:
             return ""

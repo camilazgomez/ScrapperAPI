@@ -71,7 +71,7 @@ def scrape_category(category: str) -> List[Dict[str, str]]:
             
             link_tag    = art.find("a", href=True)
             article_url = link_tag["href"]
-            read_time = extract_read_time(driver, article_url) if article_url else ""
+            read_time = extract_read_time(article_url) if article_url else ""
 
             rows.append(
                 {

@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 
 def normalize(text: str) -> str:
@@ -20,23 +21,22 @@ def split_author(text: str) -> Tuple[str, str]:
     return name, role
 
 
-def click_all_load_more(driver: WebDriver, timeout: int = 8) -> None:
+def click_all_load_more(driver, wait: WebDriverWait | None = None) -> None:
+    wait = wait or WebDriverWait(driver, 10)
     while True:
         try:
-            btn = WebDriverWait(driver, timeout).until(
-                EC.element_to_be_clickable(
-                    (
-                        By.XPATH,
-                        "//button[contains(translate(., "
-                        "'ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚ', "
-                        "'abcdefghijklmnopqrstuvwxyzáéíóú'), "
-                        "'cargar más')]",
-                    )
-                )
+            btn = wait.until(
+                EC.element_to_be_clickable((
+                    By.XPATH,
+                    "//button[contains(translate(., "
+                    "'ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚ', "
+                    "'abcdefghijklmnopqrstuvwxyzáéíóú'), 'cargar más')]"
+                ))
             )
             driver.execute_script("arguments[0].click();", btn)
-        except Exception:
-            break
+            wait.until(EC.staleness_of(btn))
+        except TimeoutException:
+            break 
 
 
 def extract_read_time(driver: WebDriver, url: str, timeout: int = 8) -> str:

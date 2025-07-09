@@ -4,6 +4,10 @@ from bs4 import BeautifulSoup
 import os
 
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -36,6 +40,17 @@ def scrape_category(category: str) -> List[Dict[str, str]]:
     try:
         logger.info("Abriendo %s", url)
         driver.get(url)
+
+        wait = WebDriverWait(driver, 15)
+        try:
+            wait.until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "div[class*=BlogArticle_box]")
+                )
+            )
+        except TimeoutException:
+            logger.warning("Timeout: no se encontraron artículos en %s", category)
+            return []  
 
         click_all_load_more(driver)
 

@@ -2,6 +2,7 @@ import logging
 from typing import Dict, List
 from bs4 import BeautifulSoup
 import os
+import undetected_chromedriver as uc
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -19,13 +20,13 @@ logger   = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 def _get_driver() -> webdriver.Chrome:
-    opts = Options()
-    opts.binary_location = os.getenv("CHROME_BIN", "/usr/bin/chromium")
-    opts.add_argument("--headless") 
+    opts = uc.ChromeOptions()
+    opts.headless = True
+    opts.add_argument("--headless=new")     
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
-    service = Service(os.getenv("CHROMEDRIVER_PATH", "/usr/bin/chromedriver"))
-    return webdriver.Chrome(service=service, options=opts)
+    opts.binary_location = os.getenv("CHROME_BIN", "/usr/bin/chromium")
+    return uc.Chrome(options=opts, version_main=None)
 
 def scrape_category(category: str) -> List[Dict[str, str]]:
     slug = get_slug(category)
@@ -50,6 +51,10 @@ def scrape_category(category: str) -> List[Dict[str, str]]:
             )
         except TimeoutException:
             logger.warning("Timeout: no se encontraron artículos en %s", category)
+            debug_path = f"debug_{category}.html"
+            with open(debug_path, "w", encoding="utf-8") as f:
+                f.write(driver.page_source)
+            logger.info(f"Guardado HTML para debugging en {debug_path}")
             return []  
 
         click_all_load_more(driver)

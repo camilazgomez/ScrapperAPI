@@ -1,6 +1,7 @@
 import logging
 from typing import Dict, List
 from bs4 import BeautifulSoup
+import os
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -15,10 +16,12 @@ logging.basicConfig(level=logging.INFO)
 
 def _get_driver() -> webdriver.Chrome:
     opts = Options()
-    opts.add_argument("--headless=new")
+    opts.binary_location = os.getenv("CHROME_BIN", "/usr/bin/chromium")
+    opts.add_argument("--headless") 
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
-    return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
+    service = Service(os.getenv("CHROMEDRIVER_PATH", "/usr/bin/chromedriver"))
+    return webdriver.Chrome(service=service, options=opts)
 
 def scrape_category(category: str) -> List[Dict[str, str]]:
     slug = get_slug(category)

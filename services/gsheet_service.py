@@ -21,20 +21,32 @@ if _raw_path:
     CREDS_PATH = Path(_raw_path).expanduser().resolve()
 
 SPREADSHEET_URL: str | None = os.getenv("GOOGLE_SPREADSHEET_URL")
+
+# Scopes necesarios gsheets para editar en drive
 SCOPES = (
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
 )
 
+# Validación de configuración
 if CREDS_PATH is None or not CREDS_PATH.exists():
     raise RuntimeError("[gsheet_service] GOOGLE_CREDS_PATH no definido o no existe")
-
 if SPREADSHEET_URL is None:
     raise RuntimeError("[gsheet_service] GOOGLE_SPREADSHEET_URL no definido")
 
 _gclient: gspread.Client | None = None
+
+# Constantes de reintento
 MAX_RETRIES = 3
 RETRY_BACKOFF = 5 
+
+HEADER_MAP = {
+    "title":        "Title",
+    "category":     "Category",
+    "author_name":  "Author",
+    "read_time":    "Read Time",
+    "author_role":  "Author Role",
+}
 
 def _get_client() -> gspread.Client:
     global _gclient
@@ -45,15 +57,8 @@ def _get_client() -> gspread.Client:
         _gclient = gspread.authorize(creds)
     return _gclient
 
-HEADER_MAP = {
-    "title":        "Title",
-    "category":     "Category",
-    "author_name":  "Author",
-    "read_time":    "Read Time",
-    "author_role":  "Author Role",
-}
-
-
+# Crea una hoja con los datos scrapeados y retorna los enlaces relevantes.
+# Si ocurre un error, reintenta hasta MAX_RETRIES veces.
 def upload_rows_to_gsheet(rows: List[Dict[str, str]], category: str) -> Dict[str, str]:
     for attempt in range(1, MAX_RETRIES + 1):
         try:

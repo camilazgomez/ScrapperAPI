@@ -33,7 +33,7 @@ async def trigger_scraper(data: ScrappingInformation, tasks: BackgroundTasks):
                             detail=f"No se pudo contactar la URL del webhook: {data.webhook}")
     
     email = data.email or DEFAULT_EMAIL    
-    tasks.add_task(run_scraping_flow, data.category, data.webhook, data.email)
+    tasks.add_task(run_scraping_flow, data.category, data.webhook, email)
     return {
         "status":   "accepted",
         "detail":   f"Se inició el scraping para '{data.category}'. Se notificara al webhook al finalizar.",

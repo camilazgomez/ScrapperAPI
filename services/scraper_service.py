@@ -29,6 +29,8 @@ def _get_driver() -> webdriver.Chrome:
     opts.binary_location = os.getenv("CHROME_BIN", "/usr/bin/chromium")
     return uc.Chrome(options=opts, version_main=None)
 
+# Realiza scraping sobre una categoría específica del blog.
+# Devuelve una lista de artículos con título, autor, rol, categoría y tiempo de lectura.
 def scrape_category(category: str) -> List[Dict[str, str]]:
     slug = get_slug(category)
     if not slug:
@@ -58,6 +60,7 @@ def scrape_category(category: str) -> List[Dict[str, str]]:
             logger.info(f"Guardado HTML para debugging en {debug_path}")
             return []  
 
+        # Carga todos los artículos visibles haciendo clic en "Cargar más"
         click_all_load_more(driver)
 
         soup      = BeautifulSoup(driver.page_source, "html.parser")

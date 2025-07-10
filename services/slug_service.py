@@ -13,6 +13,7 @@ def _normalize(text: str) -> str:
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
     return re.sub(r"\s+", " ", text.lower()).strip()
 
+# Scrapea el sitio principal del blog para reconstruir el mapa de categorías
 def _rebuild_slug_map() -> dict:
     html = requests.get("https://xepelin.com/blog", timeout=10).text
     soup = bs4.BeautifulSoup(html, "html.parser")
@@ -22,6 +23,8 @@ def _rebuild_slug_map() -> dict:
         if a.text.strip()
     }
 
+# Devuelve el slug asociado a una categoría normalizada.
+# Usa caché con expiración para evitar solicitudes frecuentes
 def get_slug(category_name: str) -> Optional[str]:
     global _cached_slug_map, _cached_slug_map_timestamp
     now = datetime.now(timezone.utc)

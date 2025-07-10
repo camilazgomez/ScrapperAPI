@@ -2,6 +2,7 @@ import logging
 from typing import Dict, List
 from bs4 import BeautifulSoup
 import os
+import gc
 import undetected_chromedriver as uc
 
 from selenium import webdriver
@@ -42,7 +43,7 @@ def scrape_category(category: str) -> List[Dict[str, str]]:
         logger.info("Abriendo %s", url)
         driver.get(url)
 
-        wait = WebDriverWait(driver, 15)
+        wait = WebDriverWait(driver, 25)
         try:
             wait.until(
                 EC.presence_of_element_located(
@@ -60,6 +61,9 @@ def scrape_category(category: str) -> List[Dict[str, str]]:
         click_all_load_more(driver)
 
         soup      = BeautifulSoup(driver.page_source, "html.parser")
+        driver.quit()
+        gc.collect()
+
         articles  = soup.select("div[class*=BlogArticle_box]")
         logger.info("Total artículos encontrados: %d", len(articles))
 
@@ -82,7 +86,7 @@ def scrape_category(category: str) -> List[Dict[str, str]]:
                     "author_role":  author_role,
                 }
             )
-    finally:
-        driver.quit()
+    except Exception as e:
+        logger.exception("Error en el scraping de la categoría '%s': %s", category, str(e))
     return rows
 

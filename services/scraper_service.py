@@ -23,7 +23,11 @@ def _get_driver() -> webdriver.Chrome:
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.binary_location = os.getenv("CHROME_BIN", "/usr/bin/chromium")
-    return uc.Chrome(options=opts, version_main=None)
+
+    uc_driver_path = os.path.expanduser(
+        "~/.local/share/undetected_chromedriver/undetected_chromedriver"
+    )
+    return uc.Chrome(options=opts, driver_executable_path=uc_driver_path, version_main=None)
 
 # Realiza scraping sobre una categoría específica del blog.
 # Devuelve una lista de artículos con título, autor, rol, categoría y tiempo de lectura.

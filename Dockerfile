@@ -10,10 +10,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
+ENV UC_TEMP_DIR=/tmp/uc_cache
 
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+RUN python -c "\
+import undetected_chromedriver as uc; \
+d = uc.Chrome(headless=True); \
+d.quit()"
 
 COPY . .
 

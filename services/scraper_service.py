@@ -19,7 +19,6 @@ logging.basicConfig(level=logging.INFO)
 
 def _get_driver() -> webdriver.Chrome:
     opts = uc.ChromeOptions()
-    opts.headless = True
     opts.add_argument("--headless=new")     
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")

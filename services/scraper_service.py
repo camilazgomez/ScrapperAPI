@@ -19,15 +19,22 @@ logging.basicConfig(level=logging.INFO)
 
 def _get_driver() -> webdriver.Chrome:
     opts = uc.ChromeOptions()
-    opts.add_argument("--headless=new")     
+    opts.add_argument("--headless=new")
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.binary_location = os.getenv("CHROME_BIN", "/usr/bin/chromium")
 
+    version_main = int(os.getenv("CHROME_VERSION_MAIN"))
+
     uc_driver_path = os.path.expanduser(
         "~/.local/share/undetected_chromedriver/undetected_chromedriver"
     )
-    return uc.Chrome(options=opts, driver_executable_path=uc_driver_path, version_main=None)
+
+    return uc.Chrome(
+        options=opts,
+        version_main=version_main,
+        driver_executable_path=uc_driver_path,
+    )
 
 # Realiza scraping sobre una categoría específica del blog.
 # Devuelve una lista de artículos con título, autor, rol, categoría y tiempo de lectura.

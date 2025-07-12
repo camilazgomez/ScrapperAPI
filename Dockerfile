@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libnss3 libatk-bridge2.0-0 libgtk-3-0 \
     libasound2 libxss1 libu2f-udev libvulkan1 \
     fonts-liberation curl ca-certificates \
+ && chromium --version \
+ && chromedriver --version \
  && rm -rf /var/lib/apt/lists/*
 
 ENV CHROME_BIN=/usr/bin/chromium

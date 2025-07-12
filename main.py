@@ -19,7 +19,7 @@ class ScrappingInformation(BaseModel):
 
 @app.post("/blog-scraper")
 async def trigger_scraper(data: ScrappingInformation, tasks: BackgroundTasks):
-    slug = get_slug(data.category)
+    slug = await  get_slug(data.category)
     if not slug:
         raise HTTPException(status_code=400,
                             detail=f"Categoría '{data.category}' no existe en el blog")
@@ -28,7 +28,7 @@ async def trigger_scraper(data: ScrappingInformation, tasks: BackgroundTasks):
         raise HTTPException(status_code=400,
                             detail=f"URL de webhook inválida: {data.webhook}")
 
-    if not is_reachable_url(data.webhook):
+    if not await is_reachable_url(data.webhook):
         raise HTTPException(status_code=400,
                             detail=f"No se pudo contactar la URL del webhook: {data.webhook}")
     
@@ -42,6 +42,6 @@ async def trigger_scraper(data: ScrappingInformation, tasks: BackgroundTasks):
 
 
 @app.get("/slugs")
-def list_available_slugs():
+async def list_available_slugs():
     """Devuelve el mapa de slugs cacheado."""
-    return get_all_slugs()
+    return await get_all_slugs()

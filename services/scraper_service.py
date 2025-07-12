@@ -10,10 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from services.slug_service import get_slug
+
 from utils.html_utils import ( click_all_load_more, extract_read_time, split_author,)
 
 BASE_URL = "https://xepelin.com/blog/"
@@ -31,8 +28,7 @@ def _get_driver() -> webdriver.Chrome:
 
 # Realiza scraping sobre una categoría específica del blog.
 # Devuelve una lista de artículos con título, autor, rol, categoría y tiempo de lectura.
-def scrape_category(category: str) -> List[Dict[str, str]]:
-    slug = get_slug(category)
+def scrape_category(category: str, slug: str) -> List[Dict[str, str]]:
     if not slug:
         logger.warning("Categoría '%s' no encontrada en el blog", category)
         return []

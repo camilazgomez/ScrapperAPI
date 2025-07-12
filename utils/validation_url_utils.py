@@ -8,9 +8,10 @@ def is_valid_url(url: str) -> bool:
     except Exception:
         return False
 
-def is_reachable_url(url: str, timeout: int = 5) -> bool:
+async def is_reachable_url(url: str, timeout: int = 5) -> bool:
     try:
-        resp = httpx.head(url, timeout=timeout, follow_redirects=True)
-        return resp.status_code < 400
+        async with httpx.AsyncClient(timeout=timeout, follow_redirects=True) as client:
+            resp = await client.head(url)
+            return resp.status_code < 400
     except Exception:
         return False

@@ -17,12 +17,13 @@ class ScrappingInformation(BaseModel):
     webhook: str
     email: EmailStr | None = None
 
-@app.post("/blog-scraper")
+@app.post("/blog-scraper", description="Puedes enviar una categoría del blog para su escrapeo, y All para escrapear todas.")
 async def trigger_scraper(data: ScrappingInformation, tasks: BackgroundTasks):
-    slug = await  get_slug(data.category)
-    if not slug:
-        raise HTTPException(status_code=400,
-                            detail=f"Categoría '{data.category}' no existe en el blog")
+    if data.category.lower() != ("all" or "All") :
+        slug = await  get_slug(data.category)
+        if not slug:
+            raise HTTPException(status_code=400,
+                                detail=f"Categoría '{data.category}' no existe en el blog")
     
     if not is_valid_url(data.webhook):
         raise HTTPException(status_code=400,

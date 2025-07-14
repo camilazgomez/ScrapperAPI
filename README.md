@@ -31,9 +31,9 @@ Este endpoint espera un JSON con los siguientes campos:
 }
 ```
 
-- `category`: **(obligatorio)** nombre de la categoría del blog.
+- `category`: **(obligatorio)** nombre de la categoría del blog. Si se manda "All" se scrappearan todas las categorías. 
 - `webhook`: **(obligatorio)** URL válida a la que se notificará una vez terminado el scraping.
-- `email`: *(opcional)* correo de quien solicita la operación. Si no se incluye, se usará un correo por defecto configurado por la aplicación.
+- `email`: *(opcional)* correo de quien solicita el scrapping. Se agregó como parámetro a los solicitados por el enunciado dado que es consistente con en el flujo que quien manda el scrapping reciba los resultados, si este no se incluye se usará un correo por defecto configurado por la aplicación y se notificará en respuesta de la API.
 
 La respuesta al webhook se envía con el siguiente formato:
 
@@ -80,4 +80,6 @@ Esta aplicación está **contenedorizada**, por lo que puedes levantarla usando 
 GOOGLE_CREDS_PATH=
 GOOGLE_SPREADSHEET_URL=
 REQUEST_EMAIL=
+CONCURRENCY_LIMIT= 
 ```
+`CONCURRENCY_LIMIT` solo se usa como limite al paralelizar scrapping de "All".
